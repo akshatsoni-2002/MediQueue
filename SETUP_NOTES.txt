@@ -1,0 +1,26 @@
+MediQueue upgraded build
+
+1. Existing PostgreSQL data is preserved. Hibernate remains set to ddl-auto=update.
+2. Run from the MediQueue project root in PowerShell:
+   .\mvnw.cmd spring-boot:run
+3. New modules:
+   - Portal notifications with stored unread/read notifications
+   - Real-time floating alerts using Server-Sent Events
+   - Doctor-only appointment list and date/time editing
+   - Appointment date/time and appointment history
+   - Doctor/staff/admin queue event notifications
+   - Patient email notification service
+   - OPD management
+   - Rooms and beds availability/assignment
+   - Doctor consultation, medical records and prescriptions starter modules
+4. Patient email is intentionally disabled until SMTP credentials are configured.
+   In src/main/resources/application.properties set:
+   mediqueue.mail.enabled=true
+   spring.mail.host=smtp.gmail.com
+   spring.mail.port=587
+   spring.mail.username=YOUR_EMAIL
+   spring.mail.password=YOUR_GMAIL_APP_PASSWORD
+   spring.mail.properties.mail.smtp.auth=true
+   spring.mail.properties.mail.smtp.starttls.enable=true
+5. WhatsApp/SMS is not enabled because there is no universally free production API. Email is the initial patient channel.
+6. Do not replace/delete the existing PostgreSQL database. The new tables are created automatically by ddl-auto=update.

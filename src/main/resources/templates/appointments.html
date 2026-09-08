@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Appointments - MediQueue</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f6fb;
+            color: #20242b;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar-custom {
+            background-color: #0d6efd;
+            padding: 12px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .navbar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .brand:hover {
+            color: white;
+        }
+
+        .menu-wrapper {
+            position: relative;
+        }
+
+        .menu-button {
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            padding: 9px 16px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-button:hover {
+            background-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .menu-dots {
+            font-size: 23px;
+            line-height: 15px;
+        }
+
+        .navigation-menu {
+            display: none;
+            max-height: calc(100vh - 110px);
+            overflow-y: auto;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            padding: 8px;
+            z-index: 1000;
+        }
+
+        .navigation-menu.show {
+            display: block;
+        }
+
+        .navigation-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 13px;
+            color: #212529;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .navigation-menu a:hover {
+            background-color: #f0f5ff;
+            color: #0d6efd;
+        }
+
+        .navigation-menu a span {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .navigation-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 6px 4px;
+        }
+
+        .navigation-logout-form {
+            margin: 0;
+        }
+
+        .navigation-logout {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 13px;
+            color: #212529;
+            background: transparent;
+            border: 0;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .navigation-logout:hover {
+            background-color: #fff1f1;
+            color: #dc3545;
+        }
+
+        .navigation-logout span {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page-container {
+            width: 90%;
+            max-width: 1450px;
+            margin: 45px auto;
+        }
+
+        .page-title {
+            font-size: 46px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #657080;
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+
+        /* =========================
+           MAIN GRID
+        ========================= */
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+
+        /* =========================
+           CARDS
+        ========================= */
+
+        .card-custom {
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(30, 45, 70, 0.08);
+            overflow: hidden;
+        }
+
+        .card-header-custom {
+            padding: 25px 28px;
+            border-bottom: 1px solid #e7e9ee;
+        }
+
+        .card-header-custom h2 {
+            font-size: 23px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .card-body-custom {
+            padding: 28px;
+        }
+
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-label {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            height: 52px;
+            border-radius: 10px;
+            border: 1px solid #dce0e6;
+            font-size: 17px;
+            padding: 10px 14px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #1670f7;
+            box-shadow: 0 0 0 3px rgba(22, 112, 247, 0.12);
+        }
+
+        .btn-primary-custom {
+            width: 100%;
+            height: 52px;
+            background: #1670f7;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .btn-primary-custom:hover {
+            background: #0f60db;
+            color: white;
+        }
+
+
+        /* =========================
+           APPOINTMENT LIST
+        ========================= */
+
+        .appointments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-badge {
+            background: #1670f7;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fb;
+            padding: 17px 14px;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 700;
+            border-bottom: 1px solid #e1e4e9;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 17px 14px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: middle;
+            font-size: 15px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+
+        /* =========================
+           TOKEN
+        ========================= */
+
+        .token-circle {
+            width: 45px;
+            height: 45px;
+            background: #1670f7;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .patient-name {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .patient-id {
+            color: #6b7280;
+            margin-top: 3px;
+        }
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status-badge {
+            display: inline-block;
+            padding: 7px 13px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .status-waiting {
+            background: #fff2c7;
+            color: #876600;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .status-called {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-consultation {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-completed {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+
+        /* =========================
+           ACTION BUTTONS
+        ========================= */
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            border-radius: 8px;
+            padding: 7px 11px;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .edit-btn {
+            color: #1670f7;
+            border: 1px solid #1670f7;
+            background: white;
+        }
+
+        .edit-btn:hover {
+            color: white;
+            background: #1670f7;
+        }
+
+        .cancel-btn {
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            background: white;
+        }
+
+        .cancel-btn:hover {
+            color: white;
+            background: #dc3545;
+        }
+
+        .restore-btn {
+            color: #198754;
+            border: 1px solid #198754;
+            background: white;
+        }
+
+        .restore-btn:hover {
+            color: white;
+            background: #198754;
+        }
+
+        .delete-btn {
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            background: white;
+        }
+
+        .delete-btn:hover {
+            color: white;
+            background: #dc3545;
+        }
+
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
+
+        .empty-state {
+            text-align: center;
+            padding: 70px 20px;
+            color: #697586;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            font-size: 17px;
+            margin: 0;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1100px) {
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 38px;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .navbar-custom {
+                padding: 12px 20px;
+            }
+
+            .brand {
+                font-size: 24px;
+            }
+
+            .page-container {
+                width: 94%;
+                margin: 30px auto;
+            }
+
+            .page-title {
+                font-size: 32px;
+            }
+
+            .page-subtitle {
+                font-size: 17px;
+            }
+
+            .card-body-custom {
+                padding: 20px;
+            }
+
+            .card-header-custom {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .navbar-custom {
+                padding: 12px 16px;
+            }
+
+            .brand {
+                font-size: 21px;
+            }
+
+            .navigation-menu {
+                width: 200px;
+            }
+
+            .appointments-header {
+                gap: 10px;
+            }
+
+            .total-badge {
+                font-size: 13px;
+            }
+        }
+
+    </style>
+
+<link rel="stylesheet" href="/css/mediqueue.css">
+</head>
+
+
+<body class="mq-app-page">
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<div th:replace="~{fragments :: topbar}"></div>
+
+
+
+<!-- =========================
+     PAGE CONTENT
+========================= -->
+
+<div class="page-container">
+
+    <h1 class="page-title">
+        Appointment Management
+    </h1>
+
+    <p class="page-subtitle">
+        Register and manage hospital appointments and patient queues.
+    </p>
+
+
+    <div class="main-grid">
+
+
+        <!-- =========================
+             LEFT: CREATE APPOINTMENT
+        ========================= -->
+
+        <div class="card-custom">
+
+            <div class="card-header-custom">
+
+                <h2>
+                    Register Appointment
+                </h2>
+
+            </div>
+
+
+            <div class="card-body-custom">
+
+                <form action="/admin/appointments/add"
+                      method="post">
+
+
+                    <!-- PATIENT -->
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Patient
+                        </label>
+
+                        <select name="patientId"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Patient
+                            </option>
+
+                            <option
+                                    th:each="patient : ${patients}"
+                                    th:if="${patient.active}"
+                                    th:value="${patient.id}"
+                                    th:text="${patient.fullName + ' (ID: ' + patient.id + ')'}">
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DEPARTMENT -->
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Department
+                        </label>
+
+                        <select id="departmentSelect"
+                                name="departmentId"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Department
+                            </option>
+
+                            <option
+                                    th:each="department : ${departments}"
+                                    th:if="${department.active}"
+                                    th:value="${department.id}"
+                                    th:text="${department.name}">
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DOCTOR -->
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Doctor
+                        </label>
+
+                        <select id="doctorSelect"
+                                name="doctorId"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Department First
+                            </option>
+
+                            <option
+                                    th:each="doctor : ${doctors}"
+                                    th:if="${doctor.active}"
+                                    th:value="${doctor.id}"
+                                    th:data-department="${doctor.department.id}"
+                                    th:text="${doctor.fullName + ' - ' + doctor.specialization}">
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Appointment Date
+                        </label>
+
+                        <input type="date"
+                               name="appointmentDate"
+                               class="form-control"
+                               required>
+
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Appointment Time</label>
+                        <input type="time" name="appointmentTime" class="form-control">
+                    </div>
+
+
+                    <!-- TOKEN INFO -->
+
+                    <div class="mb-4 p-3 rounded"
+                         style="background:#f5f7fa;">
+
+                        <div style="font-weight:700; margin-bottom:5px;">
+                            Token Number
+                        </div>
+
+                        <div style="color:#687385;">
+                            Token will be generated automatically
+                            when the appointment is created.
+                        </div>
+
+                    </div>
+
+
+                    <button type="submit"
+                            class="btn-primary-custom">
+
+                        Generate Token & Register
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             RIGHT: APPOINTMENTS
+        ========================= -->
+
+        <div class="card-custom">
+
+            <div class="card-header-custom appointments-header">
+
+                <h2>
+                    All Appointments
+                </h2>
+
+                <span class="total-badge"
+                      th:text="${#lists.size(appointments) + ' Total'}">
+                    0 Total
+                </span>
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div th:if="${not #lists.isEmpty(appointments)}"
+                 class="table-container">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            Token
+                        </th>
+
+                        <th>
+                            Patient
+                        </th>
+
+                        <th>
+                            Doctor
+                        </th>
+
+                        <th>
+                            Department
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Time
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    <tr th:each="appointment : ${appointments}">
+
+
+                        <!-- TOKEN -->
+
+                        <td>
+
+                            <div class="token-circle"
+                                 th:text="${appointment.tokenNumber}">
+                                1
+                            </div>
+
+                        </td>
+
+
+                        <!-- PATIENT -->
+
+                        <td>
+
+                            <div class="patient-name"
+                                 th:text="${appointment.patient.fullName}">
+                                Patient Name
+                            </div>
+
+                            <div class="patient-id"
+                                 th:text="${'Patient ID: ' + appointment.patient.id}">
+                                Patient ID
+                            </div>
+
+                        </td>
+
+
+                        <!-- DOCTOR -->
+
+                        <td>
+
+                            <span th:text="${appointment.doctor.fullName}">
+                                Doctor
+                            </span>
+
+                        </td>
+
+
+                        <!-- DEPARTMENT -->
+
+                        <td>
+
+                            <span th:text="${appointment.department.name}">
+                                Department
+                            </span>
+
+                        </td>
+
+
+                        <!-- DATE -->
+
+                        <td>
+
+                            <span th:text="${#temporals.format(appointment.appointmentDate, 'dd-MM-yyyy')}">
+                                24-09-2026
+                            </span>
+
+                        </td>
+
+
+                        <!-- TIME -->
+
+                        <td>
+                            <span th:text="${appointment.appointmentTime != null ? #temporals.format(appointment.appointmentTime, 'hh:mm a') : '—'}">10:00 AM</span>
+                        </td>
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            <span
+                                    th:if="${appointment.status == 'WAITING'}"
+                                    class="status-badge status-waiting">
+                                WAITING
+                            </span>
+
+                            <span
+                                    th:if="${appointment.status == 'CANCELLED'}"
+                                    class="status-badge status-cancelled">
+                                CANCELLED
+                            </span>
+
+                            <span
+                                    th:if="${appointment.status == 'CALLED'}"
+                                    class="status-badge status-called">
+                                CALLED
+                            </span>
+
+                            <span
+                                    th:if="${appointment.status == 'IN_CONSULTATION'}"
+                                    class="status-badge status-consultation">
+                                IN CONSULTATION
+                            </span>
+
+                            <span
+                                    th:if="${appointment.status == 'COMPLETED'}"
+                                    class="status-badge status-completed">
+                                COMPLETED
+                            </span>
+
+                        </td>
+
+
+                        <!-- ACTION -->
+
+                        <td>
+
+                            <div class="action-buttons">
+
+
+                                <!-- EDIT -->
+
+                                <a
+                                        th:href="@{/admin/appointments/edit/{id}(id=${appointment.id})}"
+                                        class="action-btn edit-btn">
+                                    Edit
+                                </a>
+
+
+                                <!-- CANCEL -->
+
+                                <a
+                                        th:if="${appointment.status == 'WAITING'}"
+                                        th:href="@{/admin/appointments/toggle/{id}(id=${appointment.id})}"
+                                        class="action-btn cancel-btn"
+                                        onclick="return confirm('Cancel this appointment?');">
+                                    Cancel
+                                </a>
+
+
+                                <!-- RESTORE -->
+
+                                <a
+                                        th:if="${appointment.status == 'CANCELLED'}"
+                                        th:href="@{/admin/appointments/toggle/{id}(id=${appointment.id})}"
+                                        class="action-btn restore-btn">
+                                    Restore
+                                </a>
+
+
+                                <!-- DELETE -->
+
+                                <a
+                                        th:href="@{/admin/appointments/delete/{id}(id=${appointment.id})}"
+                                        class="action-btn delete-btn"
+                                        onclick="return confirm('Are you sure you want to permanently delete this appointment?');">
+                                    Delete
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- EMPTY STATE -->
+
+            <div th:if="${#lists.isEmpty(appointments)}"
+                 class="empty-state">
+
+                <h3>
+                    No appointments yet
+                </h3>
+
+                <p>
+                    Register your first appointment using the form on the left.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: notifications}"></div>
+<script src="/js/mediqueue-ui.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+package com.example.mediqueue.repository;import com.example.mediqueue.model.Opd;import org.springframework.data.jpa.repository.JpaRepository;public interface OpdRepository extends JpaRepository<Opd,Long>{}

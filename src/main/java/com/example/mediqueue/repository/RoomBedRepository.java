@@ -1,0 +1,1 @@
+package com.example.mediqueue.repository;import com.example.mediqueue.model.RoomBed;import org.springframework.data.jpa.repository.JpaRepository;public interface RoomBedRepository extends JpaRepository<RoomBed,Long>{}

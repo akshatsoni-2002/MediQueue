@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>User Management - MediQueue</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar-custom {
+            background: #1473ea;
+        }
+
+        .navbar-brand {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #1473ea, #20a9e8);
+            color: white;
+            padding: 45px 0;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-blue {
+            background: #1473ea;
+            color: white;
+            border: none;
+        }
+
+        .btn-blue:hover {
+            background: #0d5fc7;
+            color: white;
+        }
+
+        .role-badge {
+            font-size: 13px;
+            padding: 6px 10px;
+            border-radius: 20px;
+        }
+
+        .active-badge {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .inactive-badge {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .protected-badge {
+            background: #e2e3e5;
+            color: #41464b;
+        }
+    </style>
+<link rel="stylesheet" href="/css/mediqueue.css">
+</head>
+
+<body class="mq-app-page">
+
+<div th:replace="~{fragments :: topbar}"></div>
+
+
+<section class="page-header">
+
+    <div class="container">
+
+        <h1>User Management</h1>
+
+        <p class="mb-0">
+            Create and manage MediQueue login accounts.
+        </p>
+
+    </div>
+
+</section>
+
+
+<div class="container py-5">
+
+
+    <!-- Success Message -->
+
+    <div
+        th:if="${param.success}"
+        class="alert alert-success">
+
+        User account created successfully.
+
+    </div>
+
+
+    <!-- Error Messages -->
+
+    <div
+        th:if="${param.error}"
+        class="alert alert-danger">
+
+        <span th:if="${param.error[0] == 'exists'}">
+            User ID already exists.
+        </span>
+
+        <span th:if="${param.error[0] == 'empty'}">
+            User ID and password are required.
+        </span>
+
+        <span th:if="${param.error[0] == 'doctorrequired'}">
+            Please select an existing doctor for a DOCTOR account.
+        </span>
+
+        <span th:if="${param.error[0] == 'doctorinvalid'}">
+            Selected doctor could not be found.
+        </span>
+
+        <span th:if="${param.error[0] == 'protected'}">
+            ADMIN001 is the protected primary administrator account and cannot be deactivated.
+        </span>
+
+    </div>
+
+
+    <!-- Create User -->
+
+    <div class="card p-4 mb-5">
+
+        <h3 class="mb-4">
+            Create Login Account
+        </h3>
+
+        <form
+            action="/admin/users/create"
+            method="post">
+
+            <div class="row g-3">
+
+
+                <!-- User ID -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        User ID
+                    </label>
+
+                    <input
+                        type="text"
+                        name="userId"
+                        class="form-control"
+                        placeholder="Example: DOC001"
+                        required>
+
+                </div>
+
+
+                <!-- Password -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password"
+                        class="form-control"
+                        placeholder="Enter password"
+                        required>
+
+                </div>
+
+
+                <!-- Role -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Role
+                    </label>
+
+                    <select
+                        name="role"
+                        id="role"
+                        class="form-select"
+                        required
+                        onchange="toggleDoctorField()">
+
+                        <option value="">
+                            Select Role
+                        </option>
+
+                        <option value="STAFF">
+                            STAFF
+                        </option>
+
+                        <option value="DOCTOR">
+                            DOCTOR
+                        </option>
+
+                        <option value="ADMIN">
+                            ADMIN
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Doctor Selection -->
+
+                <div
+                    class="col-md-6"
+                    id="doctorField"
+                    style="display: none;">
+
+                    <label class="form-label">
+                        Link Existing Doctor
+                    </label>
+
+                    <select
+                        name="doctorId"
+                        class="form-select">
+
+                        <option value="">
+                            Select Doctor
+                        </option>
+
+                        <option
+                            th:each="doctor : ${doctors}"
+                            th:value="${doctor.id}"
+                            th:text="${doctor.fullName}">
+                        </option>
+
+                    </select>
+
+                    <small class="text-muted">
+                        Required only for DOCTOR accounts.
+                    </small>
+
+                </div>
+
+
+                <!-- Create Button -->
+
+                <div class="col-12">
+
+                    <button
+                        type="submit"
+                        class="btn btn-blue px-4">
+
+                        Create Account
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- Existing Users -->
+
+    <div class="card p-4">
+
+        <h3 class="mb-4">
+            Existing User Accounts
+        </h3>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>User ID</th>
+                        <th>Role</th>
+                        <th>Linked Doctor</th>
+                        <th>Status</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr th:each="user : ${users}">
+
+
+                        <!-- ID -->
+
+                        <td th:text="${user.id}">
+                            1
+                        </td>
+
+
+                        <!-- User ID -->
+
+                        <td>
+
+                            <strong th:text="${user.userId}">
+                                STAFF001
+                            </strong>
+
+                        </td>
+
+
+                        <!-- Role -->
+
+                        <td>
+
+                            <span
+                                class="role-badge"
+                                th:text="${user.role}">
+
+                                STAFF
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Linked Doctor -->
+
+                        <td>
+
+                            <span
+                                th:if="${user.doctor != null}"
+                                th:text="${user.doctor.fullName}">
+
+                                Doctor
+
+                            </span>
+
+                            <span
+                                th:if="${user.doctor == null}"
+                                class="text-muted">
+
+                                —
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            <span
+                                th:if="${user.active}"
+                                class="role-badge active-badge">
+
+                                Active
+
+                            </span>
+
+                            <span
+                                th:unless="${user.active}"
+                                class="role-badge inactive-badge">
+
+                                Inactive
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Action -->
+
+                        <td>
+
+
+                            <!-- Protected ADMIN001 -->
+
+                            <div
+                                th:if="${user.userId == 'ADMIN001'}">
+
+                                <span
+                                    class="role-badge protected-badge">
+
+                                    🔒 Protected
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- Other Users -->
+
+                            <div
+                                th:unless="${user.userId == 'ADMIN001'}">
+
+                                <form
+                                    th:action="@{/admin/users/{id}/toggle(id=${user.id})}"
+                                    method="post">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-sm btn-outline-secondary">
+
+                                        <span
+                                            th:if="${user.active}">
+
+                                            Deactivate
+
+                                        </span>
+
+                                        <span
+                                            th:unless="${user.active}">
+
+                                            Activate
+
+                                        </span>
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- No Users -->
+
+                    <tr th:if="${#lists.isEmpty(users)}">
+
+                        <td
+                            colspan="6"
+                            class="text-center text-muted py-4">
+
+                            No user accounts found.
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: notifications}"></div>
+<script src="/js/mediqueue-ui.js"></script>
+</body>
+
+</html>

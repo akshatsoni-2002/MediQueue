@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Doctor Workspace | MediQueue</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/mediqueue.css">
+</head>
+<body class="mq-app-page mq-command-page">
+<div th:replace="~{fragments :: topbar}"></div>
+<main class="mq-command-shell">
+    <section class="mq-command-hero mq-doctor-hero">
+        <div class="mq-hero-copy">
+            <div class="mq-kicker"><span class="mq-live-dot"></span> CLINICAL WORKSPACE · LIVE</div>
+            <h1>Good morning,<br><span th:text="${doctor != null ? doctor.fullName : userId}">Doctor</span></h1>
+            <p th:text="${doctor != null ? doctor.specialization + ' · Your clinical workspace is connected to the live patient queue.' : 'Your clinical workspace is connected to the live patient queue.'}">Your clinical workspace is connected to the live patient queue.</p>
+            <div class="mq-hero-actions"><a class="btn btn-primary" href="/doctor/queue">Open live queue →</a><a class="btn btn-outline-primary" href="/doctor/appointments">My appointments</a></div>
+        </div>
+        <div class="mq-command-visual">
+            <div class="mq-command-screen doctor-screen">
+                <div class="mq-screen-top"><span>MY CLINIC / TODAY</span><b><i></i> ONLINE</b></div>
+                <div class="mq-doctor-now"><small>NEXT PATIENT</small><strong th:text="${nextDoctorAppointment != null ? nextDoctorAppointment.tokenNumber : '—'}">—</strong><span th:text="${nextDoctorAppointment != null ? nextDoctorAppointment.patient.fullName : 'No patient waiting'}">No patient waiting</span></div>
+                <div class="mq-screen-footer"><span>Consultation progress</span><strong th:text="${doctorTodayCount > 0 ? (doctorCompletedCount * 100 / doctorTodayCount) + '%' : '0%'}">0%</strong></div>
+            </div>
+            <div class="mq-float-metric one"><small>WAITING</small><strong th:text="${doctorWaitingCount}">0</strong><span>patients</span></div>
+            <div class="mq-float-metric two"><small>DONE</small><strong th:text="${doctorCompletedCount}">0</strong><span>today</span></div>
+        </div>
+    </section>
+
+    <section class="mq-command-metrics">
+        <article><span>Today's patients</span><strong th:text="${doctorTodayCount}">0</strong><small>appointments</small></article>
+        <article><span>Waiting</span><strong th:text="${doctorWaitingCount}">0</strong><small>in your queue</small></article>
+        <article><span>In consultation</span><strong th:text="${doctorConsultationCount}">0</strong><small>current care</small></article>
+        <article><span>Completed</span><strong th:text="${doctorCompletedCount}">0</strong><small>today</small></article>
+    </section>
+
+    <section class="mq-work-grid">
+        <article class="mq-work-card mq-work-large">
+            <div class="mq-panel-head"><div><span class="mq-section-kicker">TODAY'S QUEUE</span><h2 th:text="${doctor != null ? doctor.fullName : 'My patients'}">My patients</h2></div><span class="mq-live-status">● LIVE QUEUE</span></div>
+            <div th:if="${doctorTodayAppointments != null and !doctorTodayAppointments.isEmpty()}" class="mq-patient-list">
+                <div class="mq-patient-row" th:each="a : ${doctorTodayAppointments}"><span class="mq-token-chip" th:text="${a.tokenNumber}">1</span><div><b th:text="${a.patient.fullName}">Patient</b><small th:text="${a.appointmentTime != null ? a.appointmentTime : 'Time not set'}">10:30</small></div><span class="mq-status-chip" th:text="${a.status}">WAITING</span></div>
+            </div>
+            <div th:unless="${doctorTodayAppointments != null and !doctorTodayAppointments.isEmpty()}" class="mq-empty-state">No appointments are scheduled for today.</div>
+        </article>
+        <article class="mq-work-card">
+            <div class="mq-panel-head"><div><span class="mq-section-kicker">CLINICAL TOOLS</span><h2>Care workspace</h2></div></div>
+            <div class="mq-action-list">
+                <a href="/doctor/appointments"><span>01</span>Appointments <b>↗</b></a>
+                <a href="/doctor/queue"><span>02</span>Live queue <b>↗</b></a>
+                <a href="/doctor/appointments"><span>03</span>Consultation <b>↗</b></a>
+                <a href="/profile"><span>04</span>Professional profile <b>↗</b></a>
+            </div>
+        </article>
+    </section>
+
+    <section class="mq-module-section"><div class="mq-section-head"><div><span class="mq-section-kicker">CLINICAL FLOW</span><h2>Every patient handoff stays connected.</h2></div></div><div class="mq-flow mq-premium-flow"><div class="mq-flow-step"><div class="mq-flow-num">01</div><h3>Call</h3><p>Move the next patient from waiting into consultation.</p></div><div class="mq-flow-step"><div class="mq-flow-num">02</div><h3>Consult</h3><p>Record diagnosis, notes and the clinical conversation.</p></div><div class="mq-flow-step"><div class="mq-flow-num">03</div><h3>Prescribe</h3><p>Keep prescriptions and medical records attached to the care journey.</p></div><div class="mq-flow-step"><div class="mq-flow-num">04</div><h3>Follow up</h3><p>Continue the patient's journey with appointment and notification updates.</p></div></div></section>
+</main>
+<div th:replace="~{fragments :: notifications}"></div><div th:replace="~{fragments :: footer}"></div><script src="/js/mediqueue-ui.js"></script>
+</body></html>

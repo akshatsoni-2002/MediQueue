@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Staff Command Center | MediQueue</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/mediqueue.css">
+</head>
+
+<body class="mq-app-page mq-command-page">
+
+    <!-- ================= NAVBAR ================= -->
+    <div th:replace="~{fragments :: topbar}"></div>
+
+
+    <!-- ================= MAIN ================= -->
+    <main class="mq-command-shell">
+
+        <!-- ================= HERO ================= -->
+        <section class="mq-command-hero">
+
+            <div class="mq-hero-copy">
+
+                <div class="mq-kicker">
+                    <span class="mq-live-dot"></span>
+                    HOSPITAL OPERATIONS · LIVE
+                </div>
+
+                <h1>
+                    Everything moving.
+                    <br>
+                    <span>One operational view.</span>
+                </h1>
+
+                <p>
+                    Coordinate today's appointments, patient flow,
+                    doctors and queues from a single calm workspace.
+                </p>
+
+                <div class="mq-hero-actions">
+
+                    <a
+                        class="btn btn-primary"
+                        href="/admin/appointments">
+                        Open appointments →
+                    </a>
+
+                    <a
+                        class="btn btn-outline-primary"
+                        href="/doctor/queue">
+                        Watch live queue
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= LIVE VISUAL ================= -->
+            <div class="mq-command-visual">
+
+                <div class="mq-command-screen">
+
+                    <div class="mq-screen-top">
+
+                        <span>
+                            MEDIQUEUE / OPERATIONS
+                        </span>
+
+                        <b>
+                            <i></i>
+                            LIVE
+                        </b>
+
+                    </div>
+
+
+                    <div class="mq-screen-title">
+                        Today's patient flow
+                    </div>
+
+
+                    <div class="mq-screen-bars">
+
+                        <span style="height:38%"></span>
+                        <span style="height:58%"></span>
+                        <span style="height:46%"></span>
+                        <span style="height:78%"></span>
+                        <span style="height:64%"></span>
+                        <span style="height:88%"></span>
+                        <span style="height:70%"></span>
+
+                    </div>
+
+
+                    <div class="mq-screen-footer">
+
+                        <span>
+                            Queue load
+                        </span>
+
+                        <strong
+                            th:text="${todayCount > 0 ? (waitingCount * 100 / todayCount) : 0} + '%'">
+                            0%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Floating waiting card -->
+                <div class="mq-float-metric one">
+
+                    <small>
+                        WAITING
+                    </small>
+
+                    <strong
+                        th:text="${waitingCount}">
+                        0
+                    </strong>
+
+                    <span>
+                        patients
+                    </span>
+
+                </div>
+
+
+                <!-- Floating completed card -->
+                <div class="mq-float-metric two">
+
+                    <small>
+                        COMPLETED
+                    </small>
+
+                    <strong
+                        th:text="${completedCount}">
+                        0
+                    </strong>
+
+                    <span>
+                        today
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= METRICS ================= -->
+        <section class="mq-command-metrics">
+
+            <article>
+
+                <span>
+                    Today's appointments
+                </span>
+
+                <strong
+                    th:text="${todayCount}">
+                    0
+                </strong>
+
+                <small>
+                    scheduled visits
+                </small>
+
+            </article>
+
+
+            <article>
+
+                <span>
+                    Patients waiting
+                </span>
+
+                <strong
+                    th:text="${waitingCount}">
+                    0
+                </strong>
+
+                <small>
+                    live queue
+                </small>
+
+            </article>
+
+
+            <article>
+
+                <span>
+                    Doctors active
+                </span>
+
+                <strong
+                    th:text="${activeDoctorCount}">
+                    0
+                </strong>
+
+                <small>
+                    clinical team
+                </small>
+
+            </article>
+
+
+            <article>
+
+                <span>
+                    Departments
+                </span>
+
+                <strong
+                    th:text="${departmentCount}">
+                    0
+                </strong>
+
+                <small>
+                    care areas
+                </small>
+
+            </article>
+
+        </section>
+
+
+
+        <!-- ================= WORK GRID ================= -->
+        <section class="mq-work-grid">
+
+
+            <!-- LIVE ACTIVITY -->
+            <article class="mq-work-card mq-work-large">
+
+                <div class="mq-panel-head">
+
+                    <div>
+
+                        <span class="mq-section-kicker">
+                            LIVE ACTIVITY
+                        </span>
+
+                        <h2>
+                            Patient flow today
+                        </h2>
+
+                    </div>
+
+                    <span class="mq-live-status">
+                        ● REAL TIME
+                    </span>
+
+                </div>
+
+
+                <div class="mq-activity-line">
+
+                    <div class="mq-activity-item">
+
+                        <b
+                            th:text="${waitingCount}">
+                            0
+                        </b>
+
+                        <span>
+                            Waiting
+                        </span>
+
+                    </div>
+
+
+                    <div class="mq-activity-item active">
+
+                        <b
+                            th:text="${consultationCount}">
+                            0
+                        </b>
+
+                        <span>
+                            In consultation
+                        </span>
+
+                    </div>
+
+
+                    <div class="mq-activity-item">
+
+                        <b
+                            th:text="${completedCount}">
+                            0
+                        </b>
+
+                        <span>
+                            Completed
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FIXED THYMELEAF PROGRESS BAR -->
+                <div class="mq-progress-track">
+
+                    <span
+                        th:style="|width:${todayCount > 0 ? (completedCount * 100 / todayCount) : 0}%|">
+                    </span>
+
+                </div>
+
+
+                <p class="mq-card-note">
+                    Queue activity is synchronized with doctor
+                    and patient updates.
+                </p>
+
+            </article>
+
+
+
+            <!-- QUICK CONTROL -->
+            <article class="mq-work-card">
+
+                <div class="mq-panel-head">
+
+                    <div>
+
+                        <span class="mq-section-kicker">
+                            QUICK CONTROL
+                        </span>
+
+                        <h2>
+                            Operations
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="mq-action-list">
+
+                    <a href="/admin/appointments">
+
+                        <span>
+                            01
+                        </span>
+
+                        Appointments
+
+                        <b>
+                            ↗
+                        </b>
+
+                    </a>
+
+
+                    <a href="/doctor/queue">
+
+                        <span>
+                            02
+                        </span>
+
+                        Live queue
+
+                        <b>
+                            ↗
+                        </b>
+
+                    </a>
+
+
+                    <a href="/admin/patients">
+
+                        <span>
+                            03
+                        </span>
+
+                        Patients
+
+                        <b>
+                            ↗
+                        </b>
+
+                    </a>
+
+
+                    <a href="/facilities">
+
+                        <span>
+                            04
+                        </span>
+
+                        OPD & rooms
+
+                        <b>
+                            ↗
+                        </b>
+
+                    </a>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+
+        <!-- ================= WORKSPACES ================= -->
+        <section class="mq-module-section">
+
+            <div class="mq-section-head">
+
+                <div>
+
+                    <span class="mq-section-kicker">
+                        WORKSPACES
+                    </span>
+
+                    <h2>
+                        Move through the hospital without
+                        leaving the flow.
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="mq-module-grid">
+
+
+                <a
+                    class="mq-module"
+                    href="/admin/departments">
+
+                    <span class="mq-module-index">
+                        01
+                    </span>
+
+                    <div>
+
+                        <b>
+                            Departments
+                        </b>
+
+                        <small>
+                            Care areas &amp; configuration
+                        </small>
+
+                    </div>
+
+                    <strong>
+                        ↗
+                    </strong>
+
+                </a>
+
+
+
+                <a
+                    class="mq-module"
+                    href="/admin/doctors">
+
+                    <span class="mq-module-index">
+                        02
+                    </span>
+
+                    <div>
+
+                        <b>
+                            Doctors
+                        </b>
+
+                        <small>
+                            Clinical team directory
+                        </small>
+
+                    </div>
+
+                    <strong>
+                        ↗
+                    </strong>
+
+                </a>
+
+
+
+                <a
+                    class="mq-module"
+                    href="/admin/patients">
+
+                    <span class="mq-module-index">
+                        03
+                    </span>
+
+                    <div>
+
+                        <b>
+                            Patients
+                        </b>
+
+                        <small>
+                            Registration &amp; records
+                        </small>
+
+                    </div>
+
+                    <strong>
+                        ↗
+                    </strong>
+
+                </a>
+
+
+
+                <a
+                    class="mq-module"
+                    href="/queue/status">
+
+                    <span class="mq-module-index">
+                        04
+                    </span>
+
+                    <div>
+
+                        <b>
+                            Queue status
+                        </b>
+
+                        <small>
+                            Token visibility
+                        </small>
+
+                    </div>
+
+                    <strong>
+                        ↗
+                    </strong>
+
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ================= NOTIFICATIONS ================= -->
+    <div th:replace="~{fragments :: notifications}"></div>
+
+
+    <!-- ================= FOOTER ================= -->
+    <div th:replace="~{fragments :: footer}"></div>
+
+
+    <script src="/js/mediqueue-ui.js"></script>
+
+</body>
+</html>

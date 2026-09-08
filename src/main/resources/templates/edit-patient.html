@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Patient | MediQueue</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f8fc;
+            color: #20242b;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar-custom {
+            background-color: #0d6efd;
+            padding: 12px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .navbar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .brand:hover {
+            color: white;
+        }
+
+        .menu-wrapper {
+            position: relative;
+        }
+
+        .menu-button {
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            padding: 9px 16px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-button:hover {
+            background-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .menu-dots {
+            font-size: 23px;
+            line-height: 15px;
+        }
+
+        .navigation-menu {
+            display: none;
+            max-height: calc(100vh - 110px);
+            overflow-y: auto;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            padding: 8px;
+            z-index: 1000;
+        }
+
+        .navigation-menu.show {
+            display: block;
+        }
+
+        .navigation-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 13px;
+            color: #212529;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .navigation-menu a:hover {
+            background-color: #f0f5ff;
+            color: #0d6efd;
+        }
+
+        .navigation-menu a span {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .navigation-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 6px 4px;
+        }
+
+        .navigation-logout-form {
+            margin: 0;
+        }
+
+        .navigation-logout {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 13px;
+            color: #212529;
+            background: transparent;
+            border: 0;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .navigation-logout:hover {
+            background-color: #fff1f1;
+            color: #dc3545;
+        }
+
+        .navigation-logout span {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page-title {
+            font-weight: 700;
+        }
+
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .card {
+            border: 0;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .navbar-custom {
+                padding: 12px 16px;
+            }
+
+            .brand {
+                font-size: 21px;
+            }
+
+            .navigation-menu {
+                width: 200px;
+            }
+
+        }
+
+    </style>
+
+<link rel="stylesheet" href="/css/mediqueue.css">
+</head>
+
+
+<body class="mq-app-page">
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<div th:replace="~{fragments :: topbar}"></div>
+
+
+
+<!-- =========================
+     MAIN CONTENT
+========================= -->
+
+<div class="container py-5">
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="page-title mb-1">
+                Edit Patient
+            </h2>
+
+            <p class="text-muted mb-0">
+                Update patient information.
+            </p>
+
+        </div>
+
+
+        <a
+                href="/admin/patients"
+                class="btn btn-outline-primary">
+
+            Back to Patients
+
+        </a>
+
+    </div>
+
+
+
+    <!-- =========================
+         EDIT CARD
+    ========================= -->
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="card p-4">
+
+
+                <form
+                        th:action="@{/admin/patients/edit/{id}(id=${patient.id})}"
+                        method="post">
+
+
+                    <!-- FULL NAME -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Full Name
+                        </label>
+
+
+                        <input
+                                type="text"
+                                name="fullName"
+                                class="form-control"
+                                th:value="${patient.fullName}"
+                                required>
+
+                    </div>
+
+
+
+                    <!-- AGE + GENDER -->
+
+                    <div class="row">
+
+
+                        <div class="col-md-6">
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Age
+                                </label>
+
+
+                                <input
+                                        type="number"
+                                        name="age"
+                                        class="form-control"
+                                        min="0"
+                                        max="120"
+                                        th:value="${patient.age}"
+                                        required>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="col-md-6">
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Gender
+                                </label>
+
+
+                                <select
+                                        name="gender"
+                                        class="form-select"
+                                        required>
+
+                                    <option
+                                            value="Male"
+                                            th:selected="${patient.gender == 'Male'}">
+
+                                        Male
+
+                                    </option>
+
+
+                                    <option
+                                            value="Female"
+                                            th:selected="${patient.gender == 'Female'}">
+
+                                        Female
+
+                                    </option>
+
+
+                                    <option
+                                            value="Other"
+                                            th:selected="${patient.gender == 'Other'}">
+
+                                        Other
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PHONE -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Phone
+                        </label>
+
+
+                        <input
+                                type="text"
+                                name="phone"
+                                class="form-control"
+                                th:value="${patient.phone}"
+                                required>
+
+                    </div>
+
+
+
+                    <!-- EMAIL -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Email
+                        </label>
+
+
+                        <input
+                                type="email"
+                                name="email"
+                                class="form-control"
+                                th:value="${patient.email}">
+
+                    </div>
+
+
+
+                    <!-- ADDRESS -->
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Address
+                        </label>
+
+
+                        <textarea
+                                name="address"
+                                class="form-control"
+                                rows="4"
+                                th:text="${patient.address}"></textarea>
+
+                    </div>
+
+
+
+                    <!-- BUTTONS -->
+
+                    <div class="d-flex gap-2">
+
+                        <a
+                                href="/admin/patients"
+                                class="btn btn-outline-secondary flex-fill">
+
+                            Cancel
+
+                        </a>
+
+
+                        <button
+                                type="submit"
+                                class="btn btn-primary flex-fill">
+
+                            Save Changes
+
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: notifications}"></div>
+<script src="/js/mediqueue-ui.js"></script>
+</body>
+
+</html>

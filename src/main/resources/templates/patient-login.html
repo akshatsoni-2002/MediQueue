@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Login | MediQueue</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/mediqueue.css">
+</head>
+
+<body class="mq-patient-auth">
+
+<div th:replace="~{fragments :: authTopbar}"></div>
+
+<main class="mq-auth-shell">
+
+    <section class="mq-auth-visual">
+        <span class="mq-kicker"><i></i> PATIENT PORTAL</span>
+
+        <h1>
+            Care that moves<br>
+            <span>with you.</span>
+        </h1>
+
+        <p>
+            Appointments, doctors, queue status, notifications and payments
+            in one calm patient experience.
+        </p>
+
+        <div class="mq-auth-orbit">
+            <div class="mq-auth-orbit-card">
+                🎫
+                <strong>Live token</strong>
+                <small>Know when to move</small>
+            </div>
+
+            <div class="mq-auth-orbit-card b">
+                🩺
+                <strong>Doctor access</strong>
+                <small>Specialists on demand</small>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="mq-auth-card">
+
+        <div class="mq-auth-logo">M</div>
+
+        <span class="mq-section-kicker">PATIENT ACCESS</span>
+
+        <h2>Welcome back</h2>
+
+        <p>Sign in to your personal care hub.</p>
+
+        <div th:if="${param.registered}"
+             class="alert alert-success">
+            Account created successfully. You can now sign in.
+        </div>
+
+        <div th:if="${param.error}"
+             class="alert alert-danger">
+            We could not sign you in. Check your email and password.
+        </div>
+
+        <form method="post" action="/patient/login">
+
+            <div>
+                <label for="patientEmail" class="form-label">
+                    Email address
+                </label>
+
+                <input id="patientEmail"
+                       class="form-control"
+                       name="email"
+                       type="email"
+                       required
+                       autocomplete="email"
+                       placeholder="you@example.com">
+            </div>
+
+            <div>
+                <label for="patientPassword" class="form-label">
+                    Password
+                </label>
+
+                <input id="patientPassword"
+                       class="form-control"
+                       name="password"
+                       type="password"
+                       required
+                       autocomplete="current-password"
+                       placeholder="Enter your password">
+            </div>
+
+            <button class="btn btn-primary"
+                    type="submit">
+                Sign in to patient portal →
+            </button>
+        </form>
+
+        <div class="mq-auth-divider">
+            <span>or</span>
+        </div>
+
+        <a class="mq-google-btn"
+           th:if="${googleEnabled}"
+           href="/oauth2/authorization/google">
+            <strong>G</strong>
+            <span>Continue with Google</span>
+        </a>
+
+        <div class="mq-google-disabled" th:unless="${googleEnabled}">
+            Google sign-in is ready to connect. Add your Google OAuth Client ID and Client Secret in <code>application.properties</code> to enable it.
+        </div>
+
+        <p class="mq-auth-note">
+            Google Sign-In becomes active after you add your Google OAuth
+            client credentials in <code>application.properties</code>.
+        </p>
+
+        <a class="mq-auth-link"
+           href="/patient/signup">
+            New patient? Create an account →
+        </a>
+
+        <a class="mq-auth-link"
+           href="/login">
+            Hospital staff / doctor login
+        </a>
+
+    </section>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+<script src="/js/mediqueue-ui.js"></script>
+</body>
+</html>

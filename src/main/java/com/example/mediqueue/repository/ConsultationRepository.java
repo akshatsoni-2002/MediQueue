@@ -1,0 +1,1 @@
+package com.example.mediqueue.repository;import com.example.mediqueue.model.Consultation;import org.springframework.data.jpa.repository.JpaRepository;import java.util.Optional;public interface ConsultationRepository extends JpaRepository<Consultation,Long>{Optional<Consultation> findByAppointment_Id(Long id);}

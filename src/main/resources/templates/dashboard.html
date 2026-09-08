@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>MediQueue | Dashboard</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <style>
+
+        body {
+            margin: 0;
+            background: #f4f8fc;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar-custom {
+            background-color: #0d6efd;
+            padding: 12px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .navbar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .brand:hover {
+            color: white;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .welcome-card {
+            background: white;
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 10px;
+        }
+
+        .welcome-text {
+            color: #6c757d;
+            font-size: 17px;
+            margin-bottom: 0;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            height: 100%;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+        }
+
+        .dashboard-card h4 {
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .dashboard-card p {
+            color: #6c757d;
+        }
+
+        .dashboard-button {
+            border-radius: 9px;
+            font-weight: 600;
+        }
+
+        .logout-button {
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-weight: 500;
+        }
+
+        .logout-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+        }
+
+    </style>
+
+<link rel="stylesheet" href="/css/mediqueue.css">
+</head>
+
+<body class="mq-app-page">
+
+<div th:replace="~{fragments :: topbar}"></div>
+
+<div class="dashboard-container">
+
+    <div class="welcome-card">
+
+        <h1 class="welcome-title">
+            Welcome to MediQueue
+        </h1>
+
+        <p class="welcome-text">
+            You have successfully logged in.
+            Choose a module below to continue.
+        </p>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-6 col-lg-4">
+
+            <div class="dashboard-card">
+
+                <h4>
+                    🏥 Departments
+                </h4>
+
+                <p>
+                    Manage hospital departments.
+                </p>
+
+                <a href="/admin/departments"
+                   class="btn btn-primary dashboard-button">
+
+                    Open Departments
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+
+            <div class="dashboard-card">
+
+                <h4>
+                    👨‍⚕️ Doctors
+                </h4>
+
+                <p>
+                    Manage doctors and their details.
+                </p>
+
+                <a href="/admin/doctors"
+                   class="btn btn-primary dashboard-button">
+
+                    Open Doctors
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+
+            <div class="dashboard-card">
+
+                <h4>
+                    🧑‍🤝‍🧑 Patients
+                </h4>
+
+                <p>
+                    Manage registered patients.
+                </p>
+
+                <a href="/admin/patients"
+                   class="btn btn-primary dashboard-button">
+
+                    Open Patients
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+
+            <div class="dashboard-card">
+
+                <h4>
+                    📅 Appointments
+                </h4>
+
+                <p>
+                    Manage appointments and tokens.
+                </p>
+
+                <a href="/admin/appointments"
+                   class="btn btn-primary dashboard-button">
+
+                    Open Appointments
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+
+            <div class="dashboard-card">
+
+                <h4>
+                    🎫 Live Queue
+                </h4>
+
+                <p>
+                    Monitor today's live doctor queues.
+                </p>
+
+                <a href="/doctor/queue"
+                   class="btn btn-primary dashboard-button">
+
+                    Open Live Queue
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+
+            <div class="dashboard-card">
+
+                <h4>
+                    🔎 Queue Status
+                </h4>
+
+                <p>
+                    Check a patient's current queue position.
+                </p>
+
+                <a href="/queue/status"
+                   class="btn btn-primary dashboard-button">
+
+                    Check Queue
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: notifications}"></div>
+<script src="/js/mediqueue-ui.js"></script>
+</body>
+
+</html>

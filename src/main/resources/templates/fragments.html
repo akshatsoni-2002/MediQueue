@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- ============================================================
+     AUTHENTICATED NAVBAR
+     Back + Notifications + Theme + Profile + Menu
+     ============================================================ -->
+<nav th:fragment="topbar" class="mq-topbar">
+    <div class="mq-topbar-inner">
+
+        <a class="mq-brand" href="/dashboard">
+            <span class="mq-brand-mark">✚</span>
+            <span>MediQueue</span>
+            <span class="mq-nav-live"><i></i> LIVE</span>
+        </a>
+
+        <div class="mq-top-actions">
+
+            <button type="button"
+                    class="mq-back"
+                    onclick="mqGoBack()"
+                    title="Go back">
+                <span>←</span>
+                <span class="mq-back-text">Back</span>
+            </button>
+
+            <a class="mq-notification-btn"
+               href="/notifications"
+               title="Notifications">
+                <span class="mq-nav-bell">♧</span>
+                <span data-mq-unread
+                      th:text="${unreadNotificationCount}"
+                      th:style="${unreadNotificationCount > 0 ? 'display:inline-grid' : 'display:none'}"
+                      class="mq-unread mq-nav-unread">0</span>
+            </a>
+
+            <button type="button"
+                    class="mq-theme-btn"
+                    onclick="mqToggleTheme()"
+                    title="Toggle light/dark mode">
+                <span data-mq-theme-icon>☾</span>
+                <span class="mq-theme-text">Theme</span>
+            </button>
+
+            <a class="mq-profile-chip"
+               href="/profile"
+               title="My profile">
+
+                <span class="mq-profile-avatar"
+                      th:if="${currentHasProfilePhoto}">
+                    <img th:src="@{'/profile/photo/' + ${currentUserDbId}}"
+                         alt="Profile">
+                </span>
+
+                <span class="mq-profile-avatar mq-profile-letter"
+                      th:unless="${currentHasProfilePhoto}"
+                      th:text="${currentProfileInitial}">A</span>
+
+                <span class="mq-profile-name"
+                      th:text="${currentProfileName}">Profile</span>
+            </a>
+
+            <div class="mq-menu-wrap">
+
+                <button id="mqMenuButton"
+                        type="button"
+                        class="mq-menu-btn"
+                        onclick="mqToggleMenu()">
+                    <span class="mq-menu-dots">⋮</span>
+                    <span>Menu</span>
+                </button>
+
+                <div id="mqMenuPanel" class="mq-menu-panel">
+
+                    <div class="mq-menu-label">MediQueue</div>
+
+                    <a href="/dashboard">
+                        <span class="mq-menu-icon">⌂</span>
+                        Dashboard
+                    </a>
+
+                    <a href="/profile">
+                        <span class="mq-menu-icon">◉</span>
+                        My Profile
+                    </a>
+
+                    <!-- PATIENT -->
+                    <div th:if="${currentRole == 'PATIENT'}">
+                        <a href="/patient/doctors">
+                            <span class="mq-menu-icon">🩺</span>
+                            Find Doctors
+                        </a>
+                        <a href="/patient/book">
+                            <span class="mq-menu-icon">＋</span>
+                            Book Appointment
+                        </a>
+                        <a href="/patient/appointments">
+                            <span class="mq-menu-icon">📅</span>
+                            My Appointments
+                        </a>
+                        <a href="/patient/payments">
+                            <span class="mq-menu-icon">₹</span>
+                            Payments
+                        </a>
+                    </div>
+
+                    <!-- DOCTOR -->
+                    <div th:if="${currentRole == 'DOCTOR'}">
+                        <a href="/doctor/appointments">
+                            <span class="mq-menu-icon">📅</span>
+                            My Appointments
+                        </a>
+                        <a href="/doctor/queue">
+                            <span class="mq-menu-icon">🎫</span>
+                            My Live Queue
+                        </a>
+                    </div>
+
+                    <!-- STAFF / ADMIN -->
+                    <div th:if="${currentRole == 'STAFF' or currentRole == 'ADMIN'}">
+                        <a href="/admin/appointments">
+                            <span class="mq-menu-icon">📅</span>
+                            Appointments
+                        </a>
+                        <a href="/doctor/queue">
+                            <span class="mq-menu-icon">🎫</span>
+                            Live Queue
+                        </a>
+                        <a href="/admin/departments">
+                            <span class="mq-menu-icon">🏥</span>
+                            Departments
+                        </a>
+                        <a href="/admin/doctors">
+                            <span class="mq-menu-icon">🩺</span>
+                            Doctors
+                        </a>
+                        <a href="/admin/patients">
+                            <span class="mq-menu-icon">👤</span>
+                            Patients
+                        </a>
+                        <a href="/facilities">
+                            <span class="mq-menu-icon">🛏</span>
+                            OPD &amp; Rooms/Beds
+                        </a>
+                        <a href="/queue/status">
+                            <span class="mq-menu-icon">📊</span>
+                            Queue Status
+                        </a>
+                    </div>
+
+                    <a href="/notifications">
+                        <span class="mq-menu-icon">♧</span>
+                        <span style="flex:1">Notifications</span>
+                        <span data-mq-unread
+                              th:text="${unreadNotificationCount}"
+                              th:style="${unreadNotificationCount > 0 ? 'display:inline-grid' : 'display:none'}"
+                              class="mq-unread">0</span>
+                    </a>
+
+                    <a th:if="${currentRole == 'ADMIN'}"
+                       href="/admin/users">
+                        <span class="mq-menu-icon">⚙</span>
+                        User Management
+                    </a>
+
+                    <div class="mq-menu-divider"></div>
+
+                    <form action="/logout" method="post" style="margin:0">
+                        <button type="submit" class="mq-menu-logout">
+                            <span class="mq-menu-icon">⇥</span>
+                            Logout
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+<div id="mqToastStack" class="mq-toast-stack" aria-live="polite" aria-atomic="true"></div>
+</nav>
+
+
+<!-- ============================================================
+     PUBLIC / AUTH NAVBAR
+     Used on login, patient login and patient signup.
+     ============================================================ -->
+<nav th:fragment="authTopbar" class="mq-auth-topbar">
+    <div class="mq-auth-topbar-inner">
+
+        <a href="/" class="mq-auth-brand">
+            <span class="mq-auth-brand-mark">✚</span>
+            <span>MediQueue</span>
+        </a>
+
+        <div class="mq-auth-nav-actions">
+
+            <button type="button"
+                    class="mq-auth-nav-btn"
+                    onclick="mqGoBack()"
+                    title="Go back">
+                <span>←</span>
+                <span class="mq-auth-nav-label">Back</span>
+            </button>
+
+            <a href="/"
+               class="mq-auth-nav-link">
+                Home
+            </a>
+
+            <a href="/patient/login"
+               class="mq-auth-nav-link">
+                Patient Portal
+            </a>
+
+            <a href="/login"
+               class="mq-auth-nav-link mq-auth-nav-primary">
+                Staff / Doctor Login
+            </a>
+
+            <button type="button"
+                    class="mq-auth-theme-btn"
+                    onclick="mqToggleTheme()"
+                    title="Toggle light/dark mode"
+                    aria-label="Toggle light/dark mode">
+                <span data-mq-theme-icon>☾</span>
+            </button>
+
+        </div>
+    </div>
+</nav>
+
+
+<!-- ============================================================
+     NOTIFICATION TOAST STACK
+     ============================================================ -->
+<div th:fragment="notifications">
+    <div id="mqToastStack"
+         class="mq-toast-stack"
+         aria-live="polite"
+         aria-atomic="true"></div>
+</div>
+
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer th:fragment="footer" class="mq-footer">
+    <div class="mq-footer-inner">
+
+        <div>
+            <div class="mq-footer-brand">
+                <span class="mq-brand-mark">✚</span>
+                MediQueue
+            </div>
+            <p>
+                Smart, secure healthcare queue and hospital workflow management.
+            </p>
+        </div>
+
+        <div class="mq-footer-links">
+            <a href="/about.html">About Us</a>
+            <a href="/contact.html">Contact</a>
+            <a href="/privacy.html">Privacy</a>
+            <a href="/terms.html">Terms</a>
+        </div>
+
+        <div class="mq-footer-copy">
+            © 2026 MediQueue. All rights reserved.
+            <br>
+            Designed &amp; Developed by <strong>Akshat Soni</strong>
+        </div>
+
+    </div>
+</footer>
+
+</body>
+</html>

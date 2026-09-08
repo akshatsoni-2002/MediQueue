@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Appointment - MediQueue</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f6fb;
+            color: #20242b;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar-custom {
+            background-color: #0d6efd;
+            padding: 12px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .navbar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .brand:hover {
+            color: white;
+        }
+
+        .menu-wrapper {
+            position: relative;
+        }
+
+        .menu-button {
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            padding: 9px 16px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-button:hover {
+            background-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .menu-dots {
+            font-size: 23px;
+            line-height: 15px;
+        }
+
+        .navigation-menu {
+            display: none;
+            max-height: calc(100vh - 110px);
+            overflow-y: auto;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 220px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            padding: 8px;
+            z-index: 1000;
+        }
+
+        .navigation-menu.show {
+            display: block;
+        }
+
+        .navigation-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 13px;
+            color: #212529;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .navigation-menu a:hover {
+            background-color: #f0f5ff;
+            color: #0d6efd;
+        }
+
+        .navigation-menu a span {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .navigation-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 6px 4px;
+        }
+
+        .navigation-logout-form {
+            margin: 0;
+        }
+
+        .navigation-logout {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 13px;
+            color: #212529;
+            background: transparent;
+            border: 0;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .navigation-logout:hover {
+            background-color: #fff1f1;
+            color: #dc3545;
+        }
+
+        .navigation-logout span {
+            width: 20px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .page-container {
+            width: 90%;
+            max-width: 1250px;
+            margin: 45px auto;
+        }
+
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 35px;
+        }
+
+        .page-title {
+            font-size: 46px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: #657080;
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .back-btn {
+            color: #1670f7;
+            border: 1px solid #1670f7;
+            border-radius: 10px;
+            padding: 12px 20px;
+            text-decoration: none;
+            font-size: 17px;
+            background: white;
+        }
+
+        .back-btn:hover {
+            color: white;
+            background: #1670f7;
+        }
+
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .edit-card {
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(30, 45, 70, 0.08);
+            overflow: hidden;
+        }
+
+        .card-header-custom {
+            padding: 25px;
+            border-bottom: 1px solid #e7e9ee;
+        }
+
+        .card-header-custom h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .card-body-custom {
+            padding: 30px;
+        }
+
+
+        /* =========================
+           TOKEN
+        ========================= */
+
+        .token-box {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background: #f6f8fb;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 28px;
+        }
+
+        .token-circle {
+            width: 55px;
+            height: 55px;
+            background: #1670f7;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .token-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .appointment-id {
+            color: #657080;
+            margin-top: 3px;
+        }
+
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-label {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            height: 52px;
+            border-radius: 10px;
+            border: 1px solid #dce0e6;
+            font-size: 17px;
+            padding: 10px 14px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #1670f7;
+            box-shadow: 0 0 0 3px rgba(22, 112, 247, 0.12);
+        }
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status-label {
+            margin-bottom: 8px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .status-waiting {
+            background: #fff2c7;
+            color: #876600;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .status-called {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-consultation {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-completed {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .button-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .save-btn {
+            background: #1670f7;
+            border: 1px solid #1670f7;
+            color: white;
+            border-radius: 10px;
+            padding: 12px 22px;
+            font-size: 17px;
+        }
+
+        .save-btn:hover {
+            background: #0f60db;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: white;
+            border: 1px solid #9ca3af;
+            color: #657080;
+            border-radius: 10px;
+            padding: 12px 22px;
+            font-size: 17px;
+            text-decoration: none;
+        }
+
+        .cancel-btn:hover {
+            background: #f1f3f5;
+            color: #333;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .title-row {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .page-title {
+                font-size: 38px;
+            }
+
+        }
+
+
+        @media (max-width: 768px) {
+
+            .navbar-custom {
+                padding: 12px 20px;
+            }
+
+            .brand {
+                font-size: 24px;
+            }
+
+            .page-container {
+                width: 94%;
+                margin: 30px auto;
+            }
+
+            .page-title {
+                font-size: 32px;
+            }
+
+            .page-subtitle {
+                font-size: 17px;
+            }
+
+            .card-body-custom {
+                padding: 20px;
+            }
+
+            .button-row {
+                flex-direction: column;
+            }
+
+            .save-btn,
+            .cancel-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .navbar-custom {
+                padding: 12px 16px;
+            }
+
+            .brand {
+                font-size: 21px;
+            }
+
+            .navigation-menu {
+                width: 200px;
+            }
+
+        }
+
+    </style>
+
+<link rel="stylesheet" href="/css/mediqueue.css">
+</head>
+
+
+<body class="mq-app-page">
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<div th:replace="~{fragments :: topbar}"></div>
+
+
+
+<!-- =========================
+     PAGE
+========================= -->
+
+<div class="page-container">
+
+
+    <div class="title-row">
+
+        <div>
+
+            <h1 class="page-title">
+                Edit Appointment
+            </h1>
+
+            <p class="page-subtitle">
+                Update the appointment details below.
+            </p>
+
+        </div>
+
+
+        <a href="/admin/appointments"
+           class="back-btn">
+
+            Back to Appointments
+
+        </a>
+
+    </div>
+
+
+
+    <!-- =========================
+         EDIT CARD
+    ========================= -->
+
+    <div class="edit-card">
+
+
+        <div class="card-header-custom">
+
+            <h2>
+                Appointment Details
+            </h2>
+
+        </div>
+
+
+
+        <div class="card-body-custom">
+
+
+            <!-- TOKEN -->
+
+            <div class="token-box">
+
+                <div
+                        class="token-circle"
+                        th:text="${appointment.tokenNumber}">
+
+                    1
+
+                </div>
+
+
+                <div>
+
+                    <div class="token-title">
+                        Token Number
+                    </div>
+
+                    <div
+                            class="appointment-id"
+                            th:text="${'Appointment ID: ' + appointment.id}">
+
+                        Appointment ID: 1
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- FORM -->
+
+            <form
+                    th:action="@{/admin/appointments/edit/{id}(id=${appointment.id})}"
+                    method="post">
+
+
+                <!-- PATIENT -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Patient
+                    </label>
+
+
+                    <select
+                            id="patientSelect"
+                            name="patientId"
+                            class="form-select"
+                            required>
+
+                        <option
+                                th:each="patient : ${patients}"
+                                th:if="${patient.active or patient.id == appointment.patient.id}"
+                                th:value="${patient.id}"
+                                th:text="${patient.fullName + ' (ID: ' + patient.id + ')'}"
+                                th:selected="${patient.id == appointment.patient.id}">
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- DEPARTMENT -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Department
+                    </label>
+
+
+                    <select
+                            id="departmentSelect"
+                            name="departmentId"
+                            class="form-select"
+                            required>
+
+                        <option
+                                th:each="department : ${departments}"
+                                th:if="${department.active or department.id == appointment.department.id}"
+                                th:value="${department.id}"
+                                th:text="${department.name}"
+                                th:selected="${department.id == appointment.department.id}">
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- DOCTOR -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Doctor
+                    </label>
+
+
+                    <select
+                            id="doctorSelect"
+                            name="doctorId"
+                            class="form-select"
+                            required>
+
+                        <option
+                                th:each="doctor : ${doctors}"
+                                th:if="${doctor.active or doctor.id == appointment.doctor.id}"
+                                th:value="${doctor.id}"
+                                th:data-department="${doctor.department.id}"
+                                th:text="${doctor.fullName + ' - ' + doctor.specialization}"
+                                th:selected="${doctor.id == appointment.doctor.id}">
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- DATE -->
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Appointment Date
+                    </label>
+
+
+                    <input
+                            type="date"
+                            name="appointmentDate"
+                            class="form-control"
+                            th:value="${appointment.appointmentDate}"
+                            required>
+
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Appointment Time</label>
+                    <input type="time" name="appointmentTime" class="form-control" th:value="${appointment.appointmentTime}">
+                </div>
+
+
+
+                <!-- STATUS -->
+
+                <div class="mb-3">
+
+                    <div class="form-label status-label">
+                        Current Status
+                    </div>
+
+
+                    <span
+                            th:if="${appointment.status == 'WAITING'}"
+                            class="status-badge status-waiting">
+
+                        WAITING
+
+                    </span>
+
+
+                    <span
+                            th:if="${appointment.status == 'CANCELLED'}"
+                            class="status-badge status-cancelled">
+
+                        CANCELLED
+
+                    </span>
+
+
+                    <span
+                            th:if="${appointment.status == 'CALLED'}"
+                            class="status-badge status-called">
+
+                        CALLED
+
+                    </span>
+
+
+                    <span
+                            th:if="${appointment.status == 'IN_CONSULTATION'}"
+                            class="status-badge status-consultation">
+
+                        IN CONSULTATION
+
+                    </span>
+
+
+                    <span
+                            th:if="${appointment.status == 'COMPLETED'}"
+                            class="status-badge status-completed">
+
+                        COMPLETED
+
+                    </span>
+
+                </div>
+
+
+
+                <!-- BUTTONS -->
+
+                <div class="button-row">
+
+                    <button
+                            type="submit"
+                            class="save-btn">
+
+                        Save Changes
+
+                    </button>
+
+
+                    <a
+                            href="/admin/appointments"
+                            class="cancel-btn">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: notifications}"></div>
+<script src="/js/mediqueue-ui.js"></script>
+</body>
+
+</html>
